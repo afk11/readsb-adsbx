@@ -245,20 +245,18 @@ struct client *serviceConnect(struct net_connector *con) {
     // If we're able to create this "client", save the sockaddr info and print a msg
     struct client *c;
     c = createSocketClient(con->service, s);
-	if (!c) {
-		fprintf(stderr, "createSocketClient failed: %s:%s\n", con->address, con->port);
-		return NULL;
-	}
+    if (!c) {
+        fprintf(stderr, "createSocketClient failed: %s:%s\n", con->address, con->port);
+        return NULL;
+    }
 
-	// We got a client, copy 'ss' into it and set 'hostport'
-	memcpy(&c->ss, &ss, sizeof(ss));
-	char h_p[31];
-        get_host_port(c, h_p, 30);
-	strncpy(c->hostport, h_p, 30);
+    // We got a client, copy 'ss' into it and set 'hostport'
+    memcpy(&c->ss, &ss, sizeof(ss));
+    get_host_port(c, c->hostport, 30);
 
-	fprintf(stderr, "%s: Connection established: %s:%s\n", con->service->descr, con->address, con->port);
-	con->connected = 1;
-	c->con = con;
+    fprintf(stderr, "%s: Connection established: %s:%s\n", con->service->descr, con->address, con->port);
+    con->connected = 1;
+    c->con = con;
 
     return c;
 }
@@ -438,9 +436,7 @@ static struct client * modesAcceptClients(void) {
                 if (c) {
                     // We created the client, save the sockaddr info and 'hostport'
                     memcpy(&c->ss, &saddr, sizeof(saddr));
-                    char h_p[31];
-                    get_host_port(c, h_p, 30);
-	            strncpy(c->hostport, h_p, 30);
+                    get_host_port(c, c->hostport, 30);
 
                     if (Modes.debug & MODES_DEBUG_NET) {
                         fprintf(stderr, "%s: New connection from %s (fd %d)\n", c->service->descr, c->hostport, fd);
